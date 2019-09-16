@@ -23,17 +23,16 @@ import (
 	"path/filepath"
 
 	"golang.org/x/net/context"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/kubernetes/pkg/util/mount"
-	"k8s.io/kubernetes/pkg/volume/util"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/container-storage-interface/spec/lib/go/csi/v0"
+	"github.com/container-storage-interface/spec/lib/go/csi"
 	"github.com/golang/glog"
-	"github.com/kubernetes-csi/drivers/pkg/csi-common"
+	csicommon "github.com/kubernetes-csi/drivers/pkg/csi-common"
 	"github.com/wavezhang/k8s-csi-lvm/pkg/lvmd"
 )
 
@@ -48,6 +47,9 @@ func (ns *nodeServer) GetNodeID() string {
 	return ns.nodeID
 }
 
+func (cs *nodeServer) NodeExpandVolume(ctx context.Context, req *csi.NodeExpandVolumeRequest) (*csi.NodeExpandVolumeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, fmt.Sprintf("NodeExpandVolume is not yet implemented"))
+}
 func (ns *nodeServer) createVolume(ctx context.Context, volumeId string) (*v1.PersistentVolume, error) {
 	pv, err := getPV(ns.client, volumeId)
 	if err != nil {
@@ -183,7 +185,8 @@ func (ns *nodeServer) NodeUnpublishVolume(ctx context.Context, req *csi.NodeUnpu
 		return nil, status.Error(codes.NotFound, "Volume not mounted")
 	}
 
-	err = util.UnmountPath(req.GetTargetPath(), mount.New(""))
+	// FIXME was UnMountPath ???
+	err = mount.New("").Unmount(targetPath)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

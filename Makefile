@@ -20,7 +20,6 @@ IMAGE_VERSION = v0.3.1
 all: lvm
 
 lvm:
-	if [ ! -d ./vendor ]; then dep ensure; fi
 	CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o ./deploy/docker/lvmplugin ./cmd/k8s-csi-lvm/
 
 lvm-container: lvm
