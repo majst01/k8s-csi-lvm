@@ -17,11 +17,11 @@ limitations under the License.
 package lvm
 
 import (
+	"github.com/container-storage-interface/spec/lib/go/csi"
 	"github.com/golang/glog"
 	"k8s.io/client-go/kubernetes"
-	"github.com/container-storage-interface/spec/lib/go/csi"
 
-	"github.com/kubernetes-csi/drivers/pkg/csi-common"
+	csicommon "github.com/kubernetes-csi/drivers/pkg/csi-common"
 )
 
 type lvm struct {
@@ -37,7 +37,6 @@ type lvm struct {
 }
 
 var (
-	lvmDriver     *lvm
 	vendorVersion = "0.3.0"
 )
 
@@ -55,7 +54,7 @@ func NewControllerServer(d *csicommon.CSIDriver, c kubernetes.Interface, vgName 
 	return &controllerServer{
 		DefaultControllerServer: csicommon.NewDefaultControllerServer(d),
 		client:                  c,
-		vgName:            vgName,
+		vgName:                  vgName,
 	}
 }
 
